@@ -3,7 +3,7 @@
 
 [![NPM](https://nodei.co/npm/orchestrator.png?downloads=true)](https://www.npmjs.com/package/orchestrator)
 
-[![apidoc](https://npmdoc.github.io/node-npmdoc-orchestrator/build/screenCapture.buildNpmdoc.browser._2Fhome_2Ftravis_2Fbuild_2Fnpmdoc_2Fnode-npmdoc-orchestrator_2Ftmp_2Fbuild_2Fapidoc.html.png)](https://npmdoc.github.io/node-npmdoc-orchestrator/build..beta..travis-ci.org/apidoc.html)
+[![apidoc](https://npmdoc.github.io/node-npmdoc-orchestrator/build/screenCapture.buildNpmdoc.browser._2Fhome_2Ftravis_2Fbuild_2Fnpmdoc_2Fnode-npmdoc-orchestrator_2Ftmp_2Fbuild_2Fapidoc.html.png)](https://npmdoc.github.io/node-npmdoc-orchestrator/build/apidoc.html)
 
 ![npmPackageListing](https://npmdoc.github.io/node-npmdoc-orchestrator/build/screenCapture.npmPackageListing.svg)
 
