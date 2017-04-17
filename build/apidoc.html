@@ -63,8 +63,61 @@
 
         <li>
 
+            <a class="apidocElementLiA" href="#apidoc.element.orchestrator.orchestrator">
+            function <span class="apidocSignatureSpan"></span>orchestrator
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.orchestrator.runTask">
+            function <span class="apidocSignatureSpan">orchestrator.</span>runTask
+            <span class="apidocSignatureSpan">(task, done)</span>
+            </a>
+
+        </li>
+
+        <li>
+
             <a class="apidocElementLiA" href="#apidoc.element.orchestrator.super_">
             function <span class="apidocSignatureSpan">orchestrator.</span>super_
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.orchestrator.toString">
+            function <span class="apidocSignatureSpan">orchestrator.</span>toString
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.orchestrator.runTask">module orchestrator.runTask</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.orchestrator.runTask.runTask">
+            function <span class="apidocSignatureSpan">orchestrator.</span>runTask
+            <span class="apidocSignatureSpan">(task, done)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.orchestrator.toString">module orchestrator.toString</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.orchestrator.toString.toString">
+            function <span class="apidocSignatureSpan">orchestrator.</span>toString
             <span class="apidocSignatureSpan">()</span>
             </a>
 
@@ -79,6 +132,96 @@
 
 
     <h2>
+        <a href="#apidoc.element.orchestrator.orchestrator" id="apidoc.element.orchestrator.orchestrator">
+        function <span class="apidocSignatureSpan"></span>orchestrator
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">orchestrator = function () {
+	EventEmitter.call(this);
+	this.doneCallback = undefined; // call this when all tasks in the queue are done
+	this.seq = []; // the order to run the tasks
+	this.tasks = {}; // task objects: name, dep (list of names of dependencies), fn (the task to run)
+	this.isRunning = false; // is the orchestrator running tasks? .start() to start, .stop() to stop
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.orchestrator.runTask" id="apidoc.element.orchestrator.runTask">
+        function <span class="apidocSignatureSpan">orchestrator.</span>runTask
+        <span class="apidocSignatureSpan">(task, done)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">runTask = function (task, done) {
+	var that = this, finish, cb, isDone = false, start, r;
+
+	finish = function (err, runMethod) {
+		var hrDuration = process.hrtime(start);
+
+		if (isDone &#x26;&#x26; !err) {
+			err = new Error(&#x27;task completion callback called too many times&#x27;);
+		}
+		isDone = true;
+
+		var duration = hrDuration[0] + (hrDuration[1] / 1e9); // seconds
+
+		done.call(that, err, {
+			duration: duration, // seconds
+			hrDuration: hrDuration, // [seconds,nanoseconds]
+			runMethod: runMethod
+		});
+	};
+
+	cb = function (err) {
+		finish(err, &#x27;callback&#x27;);
+	};
+
+	try {
+		start = process.hrtime();
+		r = task(cb);
+	} catch (err) {
+		return finish(err, &#x27;catch&#x27;);
+	}
+
+	if (r &#x26;&#x26; typeof r.then === &#x27;function&#x27;) {
+		// wait for promise to resolve
+		// FRAGILE: ASSUME: Promises/A+, see http://promises-aplus.github.io/promises-spec/
+		r.then(function () {
+			finish(null, &#x27;promise&#x27;);
+		}, function(err) {
+			finish(err, &#x27;promise&#x27;);
+		});
+
+	} else if (r &#x26;&#x26; typeof r.pipe === &#x27;function&#x27;) {
+		// wait for stream to end
+
+		eos(r, { error: true, readable: r.readable, writable: r.writable &#x26;&#x26; !r.readable }, function(err){
+			finish(err, &#x27;stream&#x27;);
+		});
+
+		// Ensure that the stream completes
+        consume(r);
+
+	} else if (task.length === 0) {
+		// synchronous, function took in args.length parameters, and the callback was extra
+		finish(null, &#x27;sync&#x27;);
+
+	//} else {
+		// FRAGILE: ASSUME: callback
+
+	}
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
         <a href="#apidoc.element.orchestrator.super_" id="apidoc.element.orchestrator.super_">
         function <span class="apidocSignatureSpan">orchestrator.</span>super_
         <span class="apidocSignatureSpan">()</span>
@@ -88,6 +231,115 @@
     <li>description and source-code<pre class="apidocCodePre">function EventEmitter() {
   EventEmitter.init.call(this);
 }</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.orchestrator.toString" id="apidoc.element.orchestrator.toString">
+        function <span class="apidocSignatureSpan">orchestrator.</span>toString
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">toString = function () {
+    return text;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.orchestrator.runTask" id="apidoc.module.orchestrator.runTask">module orchestrator.runTask</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.orchestrator.runTask.runTask" id="apidoc.element.orchestrator.runTask.runTask">
+        function <span class="apidocSignatureSpan">orchestrator.</span>runTask
+        <span class="apidocSignatureSpan">(task, done)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">runTask = function (task, done) {
+	var that = this, finish, cb, isDone = false, start, r;
+
+	finish = function (err, runMethod) {
+		var hrDuration = process.hrtime(start);
+
+		if (isDone &#x26;&#x26; !err) {
+			err = new Error(&#x27;task completion callback called too many times&#x27;);
+		}
+		isDone = true;
+
+		var duration = hrDuration[0] + (hrDuration[1] / 1e9); // seconds
+
+		done.call(that, err, {
+			duration: duration, // seconds
+			hrDuration: hrDuration, // [seconds,nanoseconds]
+			runMethod: runMethod
+		});
+	};
+
+	cb = function (err) {
+		finish(err, &#x27;callback&#x27;);
+	};
+
+	try {
+		start = process.hrtime();
+		r = task(cb);
+	} catch (err) {
+		return finish(err, &#x27;catch&#x27;);
+	}
+
+	if (r &#x26;&#x26; typeof r.then === &#x27;function&#x27;) {
+		// wait for promise to resolve
+		// FRAGILE: ASSUME: Promises/A+, see http://promises-aplus.github.io/promises-spec/
+		r.then(function () {
+			finish(null, &#x27;promise&#x27;);
+		}, function(err) {
+			finish(err, &#x27;promise&#x27;);
+		});
+
+	} else if (r &#x26;&#x26; typeof r.pipe === &#x27;function&#x27;) {
+		// wait for stream to end
+
+		eos(r, { error: true, readable: r.readable, writable: r.writable &#x26;&#x26; !r.readable }, function(err){
+			finish(err, &#x27;stream&#x27;);
+		});
+
+		// Ensure that the stream completes
+        consume(r);
+
+	} else if (task.length === 0) {
+		// synchronous, function took in args.length parameters, and the callback was extra
+		finish(null, &#x27;sync&#x27;);
+
+	//} else {
+		// FRAGILE: ASSUME: callback
+
+	}
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.orchestrator.toString" id="apidoc.module.orchestrator.toString">module orchestrator.toString</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.orchestrator.toString.toString" id="apidoc.element.orchestrator.toString.toString">
+        function <span class="apidocSignatureSpan">orchestrator.</span>toString
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function toString() { [native code] }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
     </ul>
 
