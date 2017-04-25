@@ -1,4 +1,7 @@
-# api documentation for  [orchestrator (v0.3.8)](https://github.com/robrich/orchestrator)  [![npm package](https://img.shields.io/npm/v/npmdoc-orchestrator.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-orchestrator) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-orchestrator.svg)](https://travis-ci.org/npmdoc/node-npmdoc-orchestrator)
+# npmdoc-orchestrator
+
+#### basic api documentation for  [orchestrator (v0.3.8)](https://github.com/robrich/orchestrator)  [![npm package](https://img.shields.io/npm/v/npmdoc-orchestrator.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-orchestrator) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-orchestrator.svg)](https://travis-ci.org/npmdoc/node-npmdoc-orchestrator)
+
 #### A module for sequencing and executing tasks and dependencies in maximum concurrency
 
 [![NPM](https://nodei.co/npm/orchestrator.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/orchestrator)
@@ -71,7 +74,8 @@
     "scripts": {
         "test": "mocha"
     },
-    "version": "0.3.8"
+    "version": "0.3.8",
+    "bin": {}
 }
 ```
 
